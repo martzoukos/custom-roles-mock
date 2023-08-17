@@ -1,6 +1,8 @@
+import { MY_ROLE, MY_PERMISSIONS } from './constants.js'
+
 const getAuth = () => {
   return {
-    isAuthorized: ({
+    gateAccess: ({
       organizationRole = '',
       organizationPermissions = [''],
     }) => {
@@ -8,11 +10,8 @@ const getAuth = () => {
       canAccess = organizationRole === 'admin' || organizationPermissions.indexOf('organization:delete') > -1
       return canAccess
     },
-    organizationRole: 'admin',
-    organizationPermissions: [
-      'organization:delete',
-      'organization_members:manage',
-    ]
+    organizationRole: MY_ROLE,
+    organizationPermissions: MY_PERMISSIONS
   }
 }
 

@@ -4,6 +4,20 @@
 npm i custom-roles-mock
 ```
 
+This is a mock package that contains non-working components and functions for the Custom Roles project.
+
+The logic of the code assumes that the current user has the following:
+
+- Role: `admin`
+- Permissions:
+  - `organization_members:list`
+  - `organization_members:manage`
+  - `organization_invitations:manage`
+  - `organization:manage_attributes`
+  - `organization:delete`
+  - `organization_domains:manage`
+  - `organization_enrollment:manage`
+
 ### Gate component
 
 If you wish to authorize a specific section of your application, like a Billing page which is only accessible to Admins, you can use the new <Gate/> component.
