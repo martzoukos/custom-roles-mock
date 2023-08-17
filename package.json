@@ -1,0 +1,19 @@
+{
+  "name": "custom-roles-mock",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.jsx",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martzoukos/custom-roles-mock.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/martzoukos/custom-roles-mock/issues"
+  },
+  "homepage": "https://github.com/martzoukos/custom-roles-mock#readme"
+}
