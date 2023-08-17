@@ -1,5 +1,5 @@
 type GateProps = {
-  forRole?: "admin" | "editor";
+  forRole?: string | string[];
   forPermission?: string | string[];
   notForRole?: string | string[];
   notForPermission?: string | string[];
