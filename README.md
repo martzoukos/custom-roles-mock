@@ -23,51 +23,51 @@ The logic of the code assumes that the current user has the following:
 If you wish to authorize a specific section of your application, like a Billing page which is only accessible to Admins, you can use the new <Gate/> component.
 
 ```jsx
-	<Gate>
-		This is hidden by default.
-	</Gate>
+  <Gate>
+    This is hidden by default.
+  </Gate>
 
-	<Gate roles='admin'>
-		This is visible for the "admin" role.
-	</Gate>
+  <Gate roles='admin'>
+    This is visible for the "admin" role.
+  </Gate>
 
-	<Gate permissions={['organization:delete']}>
-		This is visible for the "organization:delete" permission.
-	</Gate>
+  <Gate permissions={['organization:delete']}>
+    This is visible for the "organization:delete" permission.
+  </Gate>
 
-	<Gate
-		roles={['admin']}
-		permissions={['organization:delete']}
-	>
-		This is visible for the "admin" role or "organization:delete" permission.
-	</Gate>
+  <Gate
+    roles={['admin']}
+    permissions={['organization:delete']}
+  >
+    This is visible for the "admin" role or "organization:delete" permission.
+  </Gate>
 
-	<Gate>
-		<Gate
-			roles={['admin']}
-			permissions={['organization:delete']}
-		>
-			This is hidden. Empy Gate always hides content.
-		</Gate>
-	</Gate>
+  <Gate>
+    <Gate
+      roles={['admin']}
+      permissions={['organization:delete']}
+    >
+      This is hidden. Empy Gate always hides content.
+    </Gate>
+  </Gate>
 
-	<Gate scope='application'>
-		<Gate
-			roles={['admin']}
-			permissions={['organization:delete']}
-		>
-			This is visible for application-level roles only.
-		</Gate>
-	</Gate>
+  <Gate scope='application'>
+    <Gate
+      roles={['admin']}
+      permissions={['organization:delete']}
+    >
+      This is visible for application-level roles only.
+    </Gate>
+  </Gate>
 
-	<Gate scope='organization'>
-		<Gate
-			roles={['admin']}
-			permissions={['organization:delete']}
-		>
-			This is visible for organization-level roles only.
-		</Gate>
-	</Gate>
+  <Gate scope='organization'>
+    <Gate
+      roles={['admin']}
+      permissions={['organization:delete']}
+    >
+      This is visible for organization-level roles only.
+    </Gate>
+  </Gate>
 ```
 
 ### getAuth() - gateAccess() and properties
