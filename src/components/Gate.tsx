@@ -1,66 +1,74 @@
 import React from 'react'
-import { MY_ROLE, MY_PERMISSIONS } from './constants.js'
+import { MY_SCOPE, MY_ROLE, MY_PERMISSIONS } from './constants.js'
 
 type GateProps = {
-  forRole?: string | string[];
-  forPermissions?: string | string[];
-  notForRole?: string | string[];
-  notForPermissions?: string | string[];
+  /** One or many roles for which content will be rendered. */
+  roles?: string | string[];
+  /** One or many permissions for which content will be rendered. 
+   *  When roles and permissions are present, both will apply (a user that has ANY of all these)  */
+  permissions?: string | string[];
   /** We only support "organization" now, any other value will not render the content */
   scope?: "organization" | "application" | "resource";
   children: React.ReactNode;
 }
 
 const Gate = ({ 
-  forRole,
-  forPermissions,
-  notForRole,
-  notForPermissions,
+  roles,
+  permissions,
   scope, 
   children,
 }: GateProps) => {
   let gatedContent = null
 
-  // 1. Show if any for* match real roles/permissions
-  if (forRole || forPermissions) {
-    console.log('1')
+  // If only scope is provided, just check its value
+  if (scope && !(roles || permissions)) {
+    if (scope === MY_SCOPE) {
+      gatedContent = children
+    }
+  } else {
+    // Otherwise check all the values
+
+    // If any of roles or permissions match my role or permissions
+    // show content
     gatedContent = (
-      MY_ROLE === forRole || 
-      findInPermissions(MY_PERMISSIONS, forPermissions || ['']) 
+      searchArrayInArray(roles || [], MY_ROLE)  || 
+      searchArrayInArray(permissions || [], MY_PERMISSIONS) 
     ) ? children : null
-  }
 
-  // 2. Hide if any notFor* match real roles/permissions
-  if (notForRole || notForPermissions) {
-    console.log('2')
-    gatedContent = (
-      MY_ROLE === notForRole || 
-      findInPermissions(MY_PERMISSIONS, notForPermissions || ['']) 
-    ) ? null : children
-  }
-
-  // 3. Hide if scope is wrong (we only support "organization" now)
-  if (scope && !forRole && !forPermissions && !notForRole && !notForPermissions) {
-    console.log('3', scope)
-    gatedContent = scope !== "organization" ? null : children
+    // If we also provide a scope value, make sure it's the right one
+    if (scope && scope !== MY_SCOPE) {
+      gatedContent = null
+    }
   }
 
   return (
-    <>
+    <div>
       {gatedContent}
-    </>
+    </div>
   )
 }
 
-const findInPermissions = (
-  hayPermissions: string[], 
-  needlePermissions: string | string[]
+/**
+ * Searches a 1D array for any items of 
+ * another 1D array. If
+ * 
+ * @param needleArray 
+ * @param haystackArray 
+ * @returns boolean
+ */
+const searchArrayInArray = (
+  needleArray: string | string[],
+  haystackArray: string | string[], 
 ) => {
-  return hayPermissions.find((hpermission) => {
-    if (typeof needlePermissions === 'string') {
-      needlePermissions = [needlePermissions]
-    }
-    return needlePermissions.indexOf(hpermission) > -1
+  //Ensure arrays
+  if (typeof haystackArray === 'string') {
+    haystackArray = [haystackArray]
+  }
+  if (typeof needleArray === 'string') {
+    needleArray = [needleArray]
+  }
+  return haystackArray.find((item) => {
+    return needleArray.indexOf(item) > -1
   }) !== undefined
 }
 

@@ -22,39 +22,53 @@ The logic of the code assumes that the current user has the following:
 
 If you wish to authorize a specific section of your application, like a Billing page which is only accessible to Admins, you can use the new <Gate/> component.
 
-```
-// In app/admin/billing/page.tsx
+```jsx
+	<Gate>
+		This is hidden by default.
+	</Gate>
 
-import { Gate } from "custom-roles-mock";
+	<Gate roles='admin'>
+		This is visible for the "admin" role.
+	</Gate>
 
-export default function Billing() {
-	<>
-		<Gate for='organization_billing:manage'>
-			<h1>Your Billing Information</h1>
-			<div>...</div>
+	<Gate permissions={['organization:delete']}>
+		This is visible for the "organization:delete" permission.
+	</Gate>
+
+	<Gate
+		roles={['admin']}
+		permissions={['organization:delete']}
+	>
+		This is visible for the "admin" role or "organization:delete" permission.
+	</Gate>
+
+	<Gate>
+		<Gate
+			roles={['admin']}
+			permissions={['organization:delete']}
+		>
+			This is hidden. Empy Gate always hides content.
 		</Gate>
-		<Gate notFor='admin'>
-			<h1>You can't access this page</h1>
-			<p>
-				You need the right permissions to access this page.
-				Please contact your administrator.
-			</p>
+	</Gate>
+
+	<Gate scope='application'>
+		<Gate
+			roles={['admin']}
+			permissions={['organization:delete']}
+		>
+			This is visible for application-level roles only.
 		</Gate>
-	</>
-}
+	</Gate>
+
+	<Gate scope='organization'>
+		<Gate
+			roles={['admin']}
+			permissions={['organization:delete']}
+		>
+			This is visible for organization-level roles only.
+		</Gate>
+	</Gate>
 ```
-
-| Attribute        | Type   | Description                                                                                                                                                                                |
-| ---------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| forRole          | string | string[]                                                                                                                                                                                   | Accepts a Role key value. If an invalid value is passed nothing will be rendered.       |
-| forPermission    | string | string[]                                                                                                                                                                                   | Accepts a Permission key value. If an invalid value is passed nothing will be rendered. |
-| notForRole       | string | string[]                                                                                                                                                                                   | Accepts a Role key value. If an invalid value is passed nothing will be rendered.       |
-| notForPermission | string | string[]                                                                                                                                                                                   | Accepts a Permission key value. If an invalid value is passed nothing will be rendered. |
-| scope (future)   | string | Accepts one of application, organization, resource so that the tree inside of it knows where to look for roles and permissions. This will be helpful to resolve conflicts if, for example: |
-
-- There is an admin role on the Application level
-- And there is an admin role also on the Organization level
-  We currently only support organization level permissions so the default value will be organization.
 
 ### isAuthorized()
 

@@ -1,3 +1,4 @@
+export const MY_SCOPE = 'organization'
 export const MY_ROLE = 'admin'
 export const MY_PERMISSIONS = [
   'organization_members:list',
