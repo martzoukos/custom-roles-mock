@@ -93,14 +93,44 @@ export async function GET() {
   );
 
   // 3. Or go straight to the helper function
-  if (gateAccess("admin", ["organization:delete"], "resource")) {
+  let gatedMessages = [];
+
+  if (gateAccess()) {
+    gatedMessages.push("This is hidden by default.");
+  }
+
+  if (gateAccess("admin")) {
+    gatedMessages.push("This is visible for the admin role.");
+  }
+
+  if (gateAccess("", ["organization:delete"])) {
+    gatedMessages.push(
+      "This is visible for the organization:delete permission."
+    );
+  }
+
+  if (gateAccess(["admin"], ["organization:delete"])) {
+    gatedMessages.push(
+      "This is visible for the admin role or organization:delete permission."
+    );
+  }
+
+  if (gateAccess(["admin"], "application")) {
+    gatedMessages.push("This is visible for application-level roles only.");
+  }
+
+  if (gateAccess(["admin"], "organization")) {
+    gatedMessages.push("This is visible for organization-level roles only.");
+  }
+
+  if (gateAccess("admin")) {
     // ✅ Authorized, do data fetching and return result
-    return NextResponse.json({ foo: "bar" });
+    return NextResponse.json({ gatedMessages: gatedMessages });
   }
   {
     // ❌ Unauthorized, return error message
     return NextResponse.json({
-      error: "You don't have access to this resource.",
+      error: "You don't have access to Billing resources.",
     });
   }
 }
