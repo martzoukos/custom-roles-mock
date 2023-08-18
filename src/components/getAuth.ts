@@ -7,7 +7,15 @@ const getAuth = () => {
       roles?: string | string[],
       permissions?: string | string[],
       scope?: "organization" | "application" | "resource",
+      publicMetadata?: object,
     ) => {
+      /**
+       * publicMetadata: {
+       *  roles: ['customrole', 'customrole2'],
+       *  permissions: ['custompermission:action', 'custompermission:action2'],
+       *  scope: 'customscope',
+       * }
+       */
       return permitAccess(roles, permissions, scope)
     },
     roles: [{
