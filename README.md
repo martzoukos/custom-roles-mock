@@ -23,6 +23,7 @@ The logic of the code assumes that the current user has the following:
 If you wish to authorize a specific section of your application, like a Billing page which is only accessible to Admins, you can use the new <Gate/> component.
 
 ```jsx
+<div>
   <Gate>
     This is hidden by default.
   </Gate>
@@ -68,6 +69,7 @@ If you wish to authorize a specific section of your application, like a Billing 
       This is visible for organization-level roles only.
     </Gate>
   </Gate>
+</div>
 ```
 
 ### getAuth() - gateAccess() and properties
