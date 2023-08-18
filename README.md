@@ -70,41 +70,39 @@ If you wish to authorize a specific section of your application, like a Billing 
 	</Gate>
 ```
 
-### isAuthorized()
+### getAuth() - gateAccess() and properties
 
-You can use the helper function isAuthorized() which does all the role and permission fetching in the background and you only pass the role or permission options to the function.
+You can use the helper function `gateAccess()` which follows the same logic as above or access your `roles` and `permissions` directly.
+Note that your roles and permissions include a `scope` attribute, which for now will be "organization".
 
-```
-import { getAuth } from 'custom-roles-mock';
-import type { NextApiRequest } from 'next'
-import { NextResponse } from 'next/server'
+```ts
+import { getAuth } from "custom-roles-mock";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextApiRequest) {
-	// 1. Access your information and a helper via the getAuth()
-	const { isAuthorized, organizationRole, organizationPermissions } = getAuth(request);
+export async function GET() {
+  // 1. Access your information and a helper via the getAuth()
+  const { gateAccess, roles, permissions } = getAuth();
 
-	// 2. You can access your role information
-	console.log('role: ' + organizationRole + '\n'+ 'permissions:' + organizationPermissions);
-	// role: admin,
-	// permissions: ['organization_members:list', 'organization_members:manage', ... ,'organization:delete']
+  // 2. You can access your role information
+  console.log(
+    "roles: " +
+      JSON.stringify(roles) +
+      "\n" +
+      "permissions:" +
+      JSON.stringify(permissions)
+  );
 
-	// 3. Or go straight to the helper function
-	if (isAuthorized('admin')) {
-		// ✅ Authorized, do data fetching and return result
-	  const { searchParams } = new URL(request.url)
-	  const id = searchParams.get('id')
-	  const res = await fetch(`https://api.stripe.com/v1/payment_methods/${id}`, {
-	    headers: {
-	      'Content-Type': 'application/json',
-	      'API-Key': process.env.DATA_API_KEY,
-	    },
-	  })
-	  const billingData = await res.json()
-	  return NextResponse .json({ billingData })
-	} {
-		// ❌ Unauthorized, return error message
-		return NextResponse .status(401).send({ error: "You don't have access to Billing resources." })
-	}
+  // 3. Or go straight to the helper function
+  if (gateAccess("admin", ["organization:delete"], "resource")) {
+    // ✅ Authorized, do data fetching and return result
+    return NextResponse.json({ foo: "bar" });
+  }
+  {
+    // ❌ Unauthorized, return error message
+    return NextResponse.json({
+      error: "You don't have access to this resource.",
+    });
+  }
 }
 ```
 

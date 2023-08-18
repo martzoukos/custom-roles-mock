@@ -1,5 +1,4 @@
-import React from 'react'
-import { MY_SCOPE, MY_ROLE, MY_PERMISSIONS } from './constants.js'
+import { permitAccess } from './helpers'
 
 type GateProps = {
   /** One or many roles for which content will be rendered. */
@@ -18,29 +17,12 @@ const Gate = ({
   scope, 
   children,
 }: GateProps) => {
-  let gatedContent = null
-
-  // If only scope is provided, just check its value
-  if (scope && !(roles || permissions)) {
-    if (scope === MY_SCOPE) {
-      gatedContent = children
-    }
-  } else {
-    // Otherwise check all the values
-
-    // If any of roles or permissions match my role or permissions
-    // show content
-    gatedContent = (
-      searchArrayInArray(roles || [], MY_ROLE)  || 
-      searchArrayInArray(permissions || [], MY_PERMISSIONS) 
-    ) ? children : null
-
-    // If we also provide a scope value, make sure it's the right one
-    if (scope && scope !== MY_SCOPE) {
-      gatedContent = null
-    }
-  }
-
+  let gatedContent = permitAccess(
+    roles,
+    permissions,
+    scope
+  ) ? children : null
+  
   return (
     <div>
       {gatedContent}
@@ -48,28 +30,5 @@ const Gate = ({
   )
 }
 
-/**
- * Searches a 1D array for any items of 
- * another 1D array. If
- * 
- * @param needleArray 
- * @param haystackArray 
- * @returns boolean
- */
-const searchArrayInArray = (
-  needleArray: string | string[],
-  haystackArray: string | string[], 
-) => {
-  //Ensure arrays
-  if (typeof haystackArray === 'string') {
-    haystackArray = [haystackArray]
-  }
-  if (typeof needleArray === 'string') {
-    needleArray = [needleArray]
-  }
-  return haystackArray.find((item) => {
-    return needleArray.indexOf(item) > -1
-  }) !== undefined
-}
 
 export default Gate
