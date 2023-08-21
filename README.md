@@ -21,6 +21,8 @@ This is a mock package that contains non-working components and functions for th
 Here are some different scenarios on how the `<Gate/>` can behave. Its default behavior is to hide everything and progressively display the content if any of the provided roles or permissions match the user's R&P above.
 
 ```jsx
+import { Gate } from 'custom-roles-mock'
+
 <div>
   <Gate>
     This is hidden by default.
