@@ -3,20 +3,12 @@ import { permitAccess } from './helpers'
 
 const getAuth = () => {
   return {
-    gateAccess: (
-      roles?: string | string[],
+    gateAccess: ( options?: {
       permissions?: string | string[],
-      scope?: "organization" | "application" | "resource",
-      publicMetadata?: object,
+      isAuthorized?: Function,
+    }
     ) => {
-      /**
-       * publicMetadata: {
-       *  roles: ['customrole', 'customrole2'],
-       *  permissions: ['custompermission:action', 'custompermission:action2'],
-       *  scope: 'customscope',
-       * }
-       */
-      return permitAccess(roles, permissions, scope)
+      return permitAccess(options?.permissions, options?.isAuthorized)
     },
     roles: [{
       scope: MY_SCOPE,

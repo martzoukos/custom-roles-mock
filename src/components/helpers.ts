@@ -1,41 +1,29 @@
-import { MY_SCOPE, MY_ROLE, MY_PERMISSIONS } from './constants.js'
+import { MY_ROLE, MY_PERMISSIONS } from './constants.js'
 
 /**
  * The logic to permit access or not. Used in both
  * the Gate component and the helper function.
  * 
- * @param roles 
  * @param permissions 
- * @param scope 
+ * @param isAuthorized
  * @returns boolean
  */
 export const permitAccess = (
-  roles?: string | string [],
   permissions?: string | string [],
-  scope?: "organization" | "application" | "resource",
+  isAuthorized?: Function,
 ) => {
   let permit = false
 
-  // If only scope is provided, just check its value
-  if (scope && !(roles || permissions)) {
-    if (scope === MY_SCOPE) {
-      permit = true
-    }
-  } else {
-    // Otherwise check all the values
-
-    // If any of roles or permissions match my role or permissions
-    // show content
-    permit = (
-      searchArrayInArray(roles || [], MY_ROLE)  || 
-      searchArrayInArray(permissions || [], MY_PERMISSIONS) 
-    ) ? true : false
-
-    // If we also provide a scope value, make sure it's the right one
-    if (scope && scope !== MY_SCOPE) {
-      permit = false
-    }
-  }
+  // 1. Check permissions
+  permit = searchArrayInArray(permissions || [], MY_PERMISSIONS) 
+  
+  // 2. Check isAuthorized function, this wins every time
+  permit = isAuthorized ? isAuthorized({
+    organization: 'my org',
+    memberships: [{
+      permissions: MY_PERMISSIONS
+    }]
+  }) : permit 
 
   return permit
 }

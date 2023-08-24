@@ -22,52 +22,31 @@ The logic of the code assumes that the current user has the following:
 
 If you wish to authorize a specific section of your application, like a Billing page which is only accessible to Admins, you can use the new <Gate/> component.
 
+The component accepts two parameters:
+
+- `permissions?: string | string[]`, which accepts a list of permissions and if ANY of them matches with a user's permission, the contents are rendered.
+- `isAuthorized?: Function`, which accepts a function that returns true or false. If both parameters are present, isAuthorize() wins. Within the function you can access the `organization` object.
+
 ```jsx
 <div>
-  <Gate>
-    This is hidden by default.
-  </Gate>
+  <Gate>This is hidden by default.</Gate>
 
-  <Gate roles='admin'>
-    This is visible for the "admin" role.
-  </Gate>
-
-  <Gate permissions={['organization:delete']}>
-    This is visible for the "organization:delete" permission.
+  <Gate
+    permissions={["organization:members:read", "organization:members:manage"]}
+  >
+    This is visible for users with the organization:members:read,
+    organization:members:manage permissions.
   </Gate>
 
   <Gate
-    roles={['admin']}
-    permissions={['organization:delete']}
+    isAuthorized={(organization: any) => {
+      return !organization.memberships[0].permissions.includes(
+        "organization:documents:manage"
+      );
+    }}
   >
-    This is visible for the "admin" role or "organization:delete" permission.
-  </Gate>
-
-  <Gate>
-    <Gate
-      roles={['admin']}
-      permissions={['organization:delete']}
-    >
-      This is hidden. Empy Gate always hides content.
-    </Gate>
-  </Gate>
-
-  <Gate scope='application'>
-    <Gate
-      roles={['admin']}
-      permissions={['organization:delete']}
-    >
-      This is visible for application-level roles only.
-    </Gate>
-  </Gate>
-
-  <Gate scope='organization'>
-    <Gate
-      roles={['admin']}
-      permissions={['organization:delete']}
-    >
-      This is visible for organization-level roles only.
-    </Gate>
+    This is visible for users who dont have the role
+    organization:documents:manage.
   </Gate>
 </div>
 ```
@@ -101,31 +80,35 @@ export async function GET() {
     gatedMessages.push("This is hidden by default.");
   }
 
-  if (gateAccess("admin")) {
-    gatedMessages.push("This is visible for the admin role.");
-  }
-
-  if (gateAccess("", ["organization:delete"])) {
+  if (
+    gateAccess({
+      permissions: ["organization:members:read", "organization:members:manage"],
+    })
+  ) {
     gatedMessages.push(
-      "This is visible for the organization:delete permission."
+      "This is visible for users with the 'organization:members:read', 'organization:members:manage' permissions"
     );
   }
 
-  if (gateAccess(["admin"], ["organization:delete"])) {
+  if (
+    gateAccess({
+      isAuthorized: (organization: any) => {
+        return !organization.memberships[0].permissions.includes(
+          "organization:documents:manage"
+        );
+      },
+    })
+  ) {
     gatedMessages.push(
-      "This is visible for the admin role or organization:delete permission."
+      "This is visible for users who don't have the role 'organization:members:read'."
     );
   }
 
-  if (gateAccess(["admin"], "application")) {
-    gatedMessages.push("This is visible for application-level roles only.");
-  }
-
-  if (gateAccess(["admin"], "organization")) {
-    gatedMessages.push("This is visible for organization-level roles only.");
-  }
-
-  if (gateAccess("admin")) {
+  if (
+    gateAccess({
+      permissions: "organizations:organization:delete",
+    })
+  ) {
     // ✅ Authorized, do data fetching and return result
     return NextResponse.json({ gatedMessages: gatedMessages });
   }

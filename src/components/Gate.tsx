@@ -1,26 +1,26 @@
+import React from 'react'
 import { permitAccess } from './helpers'
 
 type GateProps = {
-  /** One or many roles for which content will be rendered. */
-  roles?: string | string[];
   /** One or many permissions for which content will be rendered. 
-   *  When roles and permissions are present, both will apply (a user that has ANY of all these)  */
+   *  If more than one exist, it will render for ANY of the permissions present in a user's permissions. 
+   * */
   permissions?: string | string[];
-  /** We only support "organization" now, any other value will not render the content */
-  scope?: "organization" | "application" | "resource";
+  /** A function that returns true or false. The boolean value decides if the contents will be
+   *  rendered or not. If both parameters are present, isAuthorized() always wins.
+   */
+  isAuthorized?: Function,
   children: React.ReactNode;
 }
 
 const Gate = ({ 
-  roles,
   permissions,
-  scope, 
+  isAuthorized,
   children,
 }: GateProps) => {
   let gatedContent = permitAccess(
-    roles,
     permissions,
-    scope
+    isAuthorized,
   ) ? children : null
   
   return (
