@@ -4,9 +4,7 @@
 npm i custom-roles-mock
 ```
 
-This is a mock package that contains non-working components and functions for the Custom Roles project.
-
-The logic of the code assumes that the current user has the following:
+This is a mock package that contains non-working components and functions for the Custom Roles project. By non-working I mean that it will not check against real Clerk permissions, but it will perform authorization logic based on the following assumed role and permissions:
 
 - Role: `admin`
 - Permissions:
@@ -20,7 +18,7 @@ The logic of the code assumes that the current user has the following:
 
 ### Gate component
 
-If you wish to authorize a specific section of your application, like a Billing page which is only accessible to Admins, you can use the new <Gate/> component.
+Here are some different scenarios on how the `<Gate/>` can behave. Its default behavior is to hide everything and progressively display the content if any of the provided roles or permissions match the user's R&P above.
 
 The component accepts two parameters:
 
